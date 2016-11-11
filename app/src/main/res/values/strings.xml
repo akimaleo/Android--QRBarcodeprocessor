@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">QR Barcode processor</string>
+    <string name="copied">Your code was copied to clipboard</string>
 </resources>

@@ -4,10 +4,14 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.media.Image;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -18,6 +22,8 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -28,13 +34,9 @@ public class MainActivity extends Activity implements ZBarScannerView.ResultHand
 
     private ZBarScannerView mScannerView;
     private RelativeLayout baseLayout;
-
-    private float startY;
-    private int startHeight;
-
+    private EditText result;
+    ImageView copyToClipboard;
     private int previousFingerPosition = 0;
-    private int baseLayoutPosition = 0;
-    private int defaultViewHeight;
 
     private boolean isClosing = false;
     private boolean isScrollingUp = false;
@@ -44,11 +46,20 @@ public class MainActivity extends Activity implements ZBarScannerView.ResultHand
     public void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.activity_main);
+        result = (EditText) findViewById(R.id.result_output);
 
         baseLayout = (RelativeLayout) findViewById(R.id.base_popup_layout);
         baseLayout.setOnTouchListener(this);
-        startHeight = baseLayout.getHeight();
-        startY = baseLayout.getY();
+        copyToClipboard = (ImageView) findViewById(R.id.copy_to_clipboard);
+        copyToClipboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Code info", result.getText());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getApplicationContext(), getString(R.string.copied), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 0);
@@ -85,20 +96,15 @@ public class MainActivity extends Activity implements ZBarScannerView.ResultHand
     @Override
     public void onPause() {
         super.onPause();
-        if (mScannerView != null)
-            mScannerView.stopCamera();           // Stop camera on pause
+        if (mScannerView != null) {// Stop camera on pause
+            mScannerView.stopCamera();
+        }
     }
 
     @Override
     public void handleResult(Result rawResult) {
-//        mScannerView.stopCamera();
 
-        Intent intent = new Intent();
-        intent.putExtra("code", rawResult.getContents());
-        intent.putExtra("format", rawResult.getBarcodeFormat().getName());
-
-        setResult(RESULT_OK, intent);
-//        finish();
+        result.setText(rawResult.getContents());
     }
 
     @Override
@@ -172,21 +178,20 @@ public class MainActivity extends Activity implements ZBarScannerView.ResultHand
     public boolean onTouch(View view, MotionEvent motionEvent) {
         // Get finger position on screen
         final int Y = (int) motionEvent.getRawY();
-
         // Switch on motion event type
-        switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
 
+        switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 // save default base layout height
-                defaultViewHeight = baseLayout.getHeight();
 
                 // Init finger and view position
                 previousFingerPosition = Y;
-                baseLayoutPosition = (int) baseLayout.getY();
+
                 break;
 
             case MotionEvent.ACTION_UP:
                 // If user was doing a scroll up
+                mScannerView.resumeCameraPreview(this);
                 if (isScrollingUp) {
 
                     // Reset baselayout position
@@ -267,6 +272,9 @@ public class MainActivity extends Activity implements ZBarScannerView.ResultHand
                 }
                 break;
         }
+
         return true;
     }
+
+
 }
