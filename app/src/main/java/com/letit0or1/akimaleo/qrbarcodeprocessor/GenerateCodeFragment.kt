@@ -8,13 +8,12 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
@@ -38,20 +37,18 @@ class GenerateCodeFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        text_input.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        code.setOnClickListener {
+            if (text_input.text.isEmpty()) {
+                Toast.makeText(activity, "Type some text", Toast.LENGTH_SHORT).show()
+            } else {
+                code.colorFilter = null
+                try {
+                    code.setImageBitmap(generateCode(text_input.text.toString(), code.height, code.width, BarcodeFormat.valueOf(types.selectedItem.toString())))
+                } catch(e: IllegalArgumentException) {
+                    Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
+                }
             }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-        })
+        }
         paste_from_clipboard.setOnClickListener {
             val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             text_input.setText(clipboard.text, TextView.BufferType.EDITABLE)
