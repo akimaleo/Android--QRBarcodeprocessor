@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/base_popup_layout"
     android:layout_width="match_parent"
     android:layout_height="300dp"
@@ -8,32 +7,18 @@
     android:layout_marginRight="@dimen/activity_horizontal_margin"
     android:layout_marginTop="50dp"
     android:background="@drawable/window_background"
-    android:padding="8dp"
-    tools:context="com.letit0or1.akimaleo.qrbarcodeprocessor.MainActivity">
+    android:padding="8dp">
 
-    <me.dm7.barcodescanner.zbar.ZBarScannerView
-        android:id="@+id/scanner"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_centerHorizontal="true" />
-
-    <EditText
-        android:id="@+id/result_output"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/scanner"
-        android:layout_alignStart="@+id/scanner"
-        android:layout_below="@+id/scanner"
-        android:layout_marginTop="35dp"
-        android:editable="false" />
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <ImageButton
-        android:id="@+id/copy_to_clipboard"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_alignBottom="@+id/result_output"
-        android:layout_toEndOf="@+id/result_output"
-        android:layout_toRightOf="@+id/result_output"
+        android:id="@+id/switch_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_content_copy_black" />
+        android:src="@drawable/ic_loop_black_24dp" />
 </RelativeLayout>
