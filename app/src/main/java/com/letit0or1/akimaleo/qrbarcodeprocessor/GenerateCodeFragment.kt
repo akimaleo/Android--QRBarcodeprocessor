@@ -1,13 +1,18 @@
 package com.letit0or1.akimaleo.qrbarcodeprocessor
 
 
+import android.Manifest
 import android.app.Fragment
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.support.v4.app.ActivityCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,9 +25,14 @@ import com.google.zxing.common.BitMatrix
 import com.google.zxing.oned.*
 import com.google.zxing.qrcode.QRCodeWriter
 import kotlinx.android.synthetic.main.fragment_generate_code.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class GenerateCodeFragment : Fragment() {
+
+    private val REQUEST_WRITE = 0
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.fragment_generate_code, container, false)
     }
@@ -37,6 +47,7 @@ class GenerateCodeFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         code.setOnClickListener {
             if (text_input.text.isEmpty()) {
                 Toast.makeText(activity, "Type some text", Toast.LENGTH_SHORT).show()
@@ -49,10 +60,16 @@ class GenerateCodeFragment : Fragment() {
                 }
             }
         }
+
+        save.setOnClickListener {
+            saveBitmap(((code.getDrawable() as BitmapDrawable)).bitmap)
+        }
+
         paste_from_clipboard.setOnClickListener {
             val clipboard = activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             text_input.setText(clipboard.text, TextView.BufferType.EDITABLE)
         }
+
         //BARCODE TYPE
         val adapter = ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, barCodeTypes)
         types.adapter = adapter
@@ -87,5 +104,28 @@ class GenerateCodeFragment : Fragment() {
             }
         }
         return imageBitmap
+    }
+
+    private fun saveBitmap(bitmapImage: Bitmap) {
+        if (ActivityCompat.checkSelfPermission(activity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_WRITE)
+        } else {
+            saveToInternalStorage(bitmapImage)
+        }
+    }
+
+    private fun saveToInternalStorage(bitmapImage: Bitmap) {
+        var format = SimpleDateFormat("dd.MM.yyyy HH:mm:ss aaa", Locale.ENGLISH)
+        MediaStore.Images.Media.insertImage(activity.getContentResolver(), bitmapImage, "BAR CODE ${(format.format(Calendar.getInstance().time))}.jpg", "");
+        Toast.makeText(activity, "saved to storage", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?) {
+        if (requestCode == REQUEST_WRITE) {
+            if (permissions!![0] == Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    && grantResults!![0] == PackageManager.PERMISSION_GRANTED) {
+                saveToInternalStorage(((code.getDrawable() as BitmapDrawable)).bitmap)
+            }
+        }
     }
 }
