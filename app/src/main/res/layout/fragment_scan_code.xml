@@ -13,12 +13,12 @@
     <EditText
         android:id="@+id/result_output"
         android:layout_width="180dp"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:layout_alignLeft="@+id/scanner"
         android:layout_alignStart="@+id/scanner"
         android:layout_below="@+id/scanner"
-        android:layout_marginTop="35dp"
-        android:editable="false" />
+        android:editable="false"
+        android:gravity="bottom" />
 
     <ImageButton
         android:id="@+id/copy_to_clipboard"
