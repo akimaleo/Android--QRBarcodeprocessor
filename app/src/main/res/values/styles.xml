@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" >
+    <style name="AppTheme">
         <item name="android:background">#10000000</item>
         <!-- Or any transparency or color you need -->
         <item name="android:windowNoTitle">true</item>

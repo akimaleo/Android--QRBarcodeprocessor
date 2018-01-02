@@ -12,8 +12,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : Activity(), View.OnTouchListener {
 
-    private lateinit var generate: GenerateCodeFragment
-    private lateinit var scan: ScanCodeFragment
+    private lateinit var generateFrg: GenerateCodeFragment
+    private lateinit var scanFrg: ScanCodeFragment
 
     private lateinit var baseLayout: RelativeLayout
     private var previousFingerPosition = 0
@@ -26,27 +26,37 @@ class MainActivity : Activity(), View.OnTouchListener {
         super.onCreate(state)
         setContentView(R.layout.activity_main)
 
-        generate = GenerateCodeFragment()
-        scan = ScanCodeFragment()
+        generateFrg = GenerateCodeFragment()
+        scanFrg = ScanCodeFragment()
+        baseLayout = base_popup_layout
+        baseLayout.setOnTouchListener(this)
 
-        switch_button.setOnClickListener { swithFragment() }
+        switchToScan()
 
-        baseLayout = findViewById(R.id.base_popup_layout) as RelativeLayout
-        baseLayout!!.setOnTouchListener(this)
-
-        swithFragment()
+        reading.setOnClickListener {
+            switchToScan()
+        }
+        generate.setOnClickListener {
+            switchToGenerate()
+        }
     }
 
-    private fun swithFragment() {
+    private fun switchToScan() {
         val fManager: FragmentManager = fragmentManager
         val transaction = fManager.beginTransaction()
-
-        if (fManager.findFragmentById(R.id.fragment_container) == null || fManager.findFragmentById(R.id.fragment_container) is GenerateCodeFragment) {
-            transaction.replace(R.id.fragment_container, scan)
-        } else {
-            transaction.replace(R.id.fragment_container, generate)
-        }
+        transaction.replace(R.id.fragment_container, scanFrg)
         transaction.commit()
+        reading.setBackgroundResource(R.color.colorAccent)
+        generate.setBackgroundResource(R.color.colorSecondary)
+    }
+
+    private fun switchToGenerate() {
+        val fManager: FragmentManager = fragmentManager
+        val transaction = fManager.beginTransaction()
+        transaction.replace(R.id.fragment_container, generateFrg)
+        transaction.commit()
+        generate.setBackgroundResource(R.color.colorAccent)
+        reading.setBackgroundResource(R.color.colorSecondary)
     }
 
     //MOVE HANDLER
@@ -113,9 +123,9 @@ class MainActivity : Activity(), View.OnTouchListener {
                         //                        }
 
                         //
-                        baseLayout!!.y = baseLayout!!.y + (Y - previousFingerPosition)
-                        if (baseLayout!!.y < 0)
-                            baseLayout!!.y = 0f
+                        baseLayout.y = baseLayout.y + (Y - previousFingerPosition)
+                        if (baseLayout.y < 0)
+                            baseLayout.y = 0f
                     } else {
 
                         // First time android rise an event for "down" move
@@ -131,9 +141,9 @@ class MainActivity : Activity(), View.OnTouchListener {
                         //                        }
 
                         // Change base layout size and position (must change position because view anchor is top left corner)
-                        baseLayout!!.y = baseLayout!!.y + (Y - previousFingerPosition)
-                        if (baseLayout!!.y + baseLayout!!.height > size.y)
-                            baseLayout!!.y = (size.y - baseLayout!!.height).toFloat()
+                        baseLayout.y = baseLayout.y + (Y - previousFingerPosition)
+                        if (baseLayout.y + baseLayout.height > size.y)
+                            baseLayout.y = (size.y - baseLayout.height).toFloat()
                     }// If we scroll down
 
                     // Update position

@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Android-QRBarcodeProcessor.iml" filepath="$PROJECT_DIR$/Android-QRBarcodeProcessor.iml" />
       <module fileurl="file://$PROJECT_DIR$/Android-QRBarcodeprocessor.iml" filepath="$PROJECT_DIR$/Android-QRBarcodeprocessor.iml" />
       <module fileurl="file://$PROJECT_DIR$/QRBarcodeprocessor.iml" filepath="$PROJECT_DIR$/QRBarcodeprocessor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
