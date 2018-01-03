@@ -31,13 +31,12 @@ import java.util.*
 
 class GenerateCodeFragment : Fragment() {
 
-    private val REQUEST_WRITE = 0
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater!!.inflate(R.layout.fragment_generate_code, container, false)
     }
 
-    val barCodeTypes = arrayOf(BarcodeFormat.CODE_128.toString(),
+    private val barCodeTypes = arrayOf(BarcodeFormat.CODE_128.toString(),
             BarcodeFormat.EAN_8.toString(),
             BarcodeFormat.EAN_13.toString(),
             BarcodeFormat.CODE_39.toString(),
@@ -55,7 +54,7 @@ class GenerateCodeFragment : Fragment() {
                 code.colorFilter = null
                 try {
                     code.setImageBitmap(generateCode(text_input.text.toString(), code.height, code.width, BarcodeFormat.valueOf(types.selectedItem.toString())))
-                } catch(e: IllegalArgumentException) {
+                } catch (e: IllegalArgumentException) {
                     Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -127,5 +126,9 @@ class GenerateCodeFragment : Fragment() {
                 saveToInternalStorage(((code.getDrawable() as BitmapDrawable)).bitmap)
             }
         }
+    }
+
+    companion object {
+        private val REQUEST_WRITE = 0
     }
 }

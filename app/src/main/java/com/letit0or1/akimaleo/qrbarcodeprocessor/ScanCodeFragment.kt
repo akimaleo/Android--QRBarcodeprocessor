@@ -7,19 +7,23 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.Toast
+import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.fragment_scan_code.*
 import kotlinx.android.synthetic.main.fragment_scan_code.view.*
 import me.dm7.barcodescanner.zbar.Result
 import me.dm7.barcodescanner.zbar.ZBarScannerView
+import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+import android.support.v4.view.accessibility.AccessibilityEventCompat.setAction
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+
 
 class ScanCodeFragment : Fragment(), ZBarScannerView.ResultHandler {
 
@@ -44,12 +48,47 @@ class ScanCodeFragment : Fragment(), ZBarScannerView.ResultHandler {
         mScannerView.setOnClickListener {
             mScannerView.resumeCameraPreview(this)
         }
-
         return view
     }
 
+    override fun onStart() {
+        super.onStart()
+        checkPermissions()
+    }
+
     private fun checkPermissions() {
-        
+
+        fun startCamera() {
+            mScannerView.startCamera()
+            grand_permissions.visibility = View.GONE
+        }
+
+        fun requestPermissions() {
+            grand_permissions.visibility = View.VISIBLE
+            grand_permissions.setOnClickListener { checkPermissions() }
+        }
+
+        fun navigateSettingsForPermissions() {
+            grand_permissions.visibility = View.VISIBLE
+            grand_permissions.setOnClickListener {
+                val intent = Intent()
+                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                val uri = Uri.fromParts("package", activity.packageName, null)
+                intent.data = uri
+                startActivity(intent)
+            }
+        }
+
+        RxPermissions(activity)
+                .requestEach(Manifest.permission.CAMERA,
+                        Manifest.permission.READ_PHONE_STATE)
+                .subscribe { permission ->
+                    when {
+                        permission.granted -> startCamera()
+                        permission.shouldShowRequestPermissionRationale -> requestPermissions()
+                        else -> navigateSettingsForPermissions()
+                    }
+                }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
