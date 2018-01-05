@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingBottom="50dp"
+    android:paddingLeft="50dp"
+    android:paddingRight="50dp"
+    android:paddingTop="50dp">
+    <item>
+        <shape>
+            <corners android:radius="600dp" />
+            <solid android:color="#7fe7e7e7" />
+        </shape>
+    </item>
+    <item
+        android:bottom="20dp"
+        android:left="20dp"
+        android:right="20dp"
+        android:top="20dp">
+        <shape>
+            <corners android:radius="600dp" />
+            <solid android:color="#81dcdcdc" />
+        </shape>
+    </item>
+    <item
+        android:bottom="100dp"
+        android:left="100dp"
+        android:right="100dp"
+        android:top="100dp">
+        <bitmap
+            android:src="@drawable/finger_tap"
+            android:tint="@color/colorAccent" />
+    </item>
+</layer-list>

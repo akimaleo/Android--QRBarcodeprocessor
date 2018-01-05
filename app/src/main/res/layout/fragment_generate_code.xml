@@ -25,7 +25,8 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/finger_tap" />
+        android:background="@android:color/transparent"
+        android:src="@drawable/finget" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,7 +41,8 @@
             android:id="@+id/types"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="@android:color/transparent" />
 
         <EditText
             android:id="@+id/text_input"
@@ -55,6 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/transparent"
+            android:scaleType="center"
             android:src="@drawable/ic_content_paste_black_24dp"
             android:tint="@color/colorSecondary" />
     </LinearLayout>
